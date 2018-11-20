@@ -6,19 +6,23 @@ class Cell {
         this.g = 0;
         this.h = 0;
         this.w = w;
+        this.color = undefined
         this.neighbours = [];
         this.precedent = undefined;
-        this.obstacle = Math.random() < 0.3;
+        this.obstacle = false; //Math.random() < 0.3;
     }
 }
-Cell.prototype.show = function(col){
-    if (col){
-        fill(col);
-        rect(this.x*this.w, this.y*this.w, this.w, this.w);
-    }else if(this.obstacle){
+Cell.prototype.show = function(){
+    if(this.obstacle){
         fill(0);
         rect(this.x*this.w, this.y*this.w, this.w, this.w);
+    }else if(this.color){
+        fill(this.color);
+        rect(this.x*this.w, this.y*this.w, this.w, this.w);
     }
+}
+Cell.prototype.setColor = function(col){
+    this.color = col;
 }
 Cell.prototype.addNeighbours = function(grid){
     if(this.x-1 >= 0){
@@ -49,6 +53,13 @@ Cell.prototype.addNeighbours = function(grid){
 Cell.prototype.heuristic = function(endpoint){
     //this.h = dist(this.x, this.y, endpoint.x, endpoint.y);
     this.h = Math.abs(this.x - endpoint.x) + Math.abs(this.y - endpoint.y);
+}
+Cell.prototype.computeG = function(cneighbour){
+    let cost = Math.sqrt((this.x - cneighbour.x)**2 + (this.y - cneighbour.y)**2);
+    return this.g + cost;
+}
+Cell.prototype.updateG = function(oldg){
+    this.g += oldg;
 }
 Cell.prototype.updateF = function(){
     this.f = this.g + this.h;
